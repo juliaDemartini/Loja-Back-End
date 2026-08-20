@@ -26,5 +26,8 @@ ENV DOTNET_EnableDiagnostics=0
 # O Alpine precisa disso para rodar C# sem dar conflito de idioma/texto
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 
+# Desativa o vigia de arquivos para não estourar o limite do servidor
+ENV DOTNET_hostBuilder__reloadConfigOnChange=false
+
 # Liga a API
 ENTRYPOINT ["dotnet", "LojaBackEnd.dll"]
