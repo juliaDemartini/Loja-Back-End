@@ -2,26 +2,29 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copia os arquivos do projeto e restaura as dependências
+# Copia e restaura
 COPY ["LojaBackEnd.csproj", "./"]
 RUN dotnet restore "LojaBackEnd.csproj"
 
-# Copia o resto do código e compila a aplicação
+# Compila a aplicação
 COPY . .
 RUN dotnet publish "LojaBackEnd.csproj" -c Release -o /app/publish
 
-# Usa uma imagem mais leve apenas para rodar a aplicação
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+# --- A MÁGICA ACONTECE AQUI ---
+# Usa o ALPINE, um Linux super leve perfeito para servidores gratuitos
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Diz ao Render qual porta a API vai usar
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
 
-# Força o C# a rodar no modo econômico de memória e desativa diagnósticos pesados
+# Mantém a economia de memória ligada
 ENV DOTNET_gcServer=0
 ENV DOTNET_EnableDiagnostics=0
 
-# O comando que faz a API ligar
+# O Alpine precisa disso para rodar C# sem dar conflito de idioma/texto
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+
+# Liga a API
 ENTRYPOINT ["dotnet", "LojaBackEnd.dll"]
