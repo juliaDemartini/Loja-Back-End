@@ -1,4 +1,11 @@
+using Microsoft.EntityFrameworkCore;
+using LojaBackEnd.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Conectando no PostgreSQL usando a URL que está no appsettings.json
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
