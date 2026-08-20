@@ -19,5 +19,9 @@ COPY --from=build /app/publish .
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
 
+# Força o C# a rodar no modo econômico de memória e desativa diagnósticos pesados
+ENV DOTNET_gcServer=0
+ENV DOTNET_EnableDiagnostics=0
+
 # O comando que faz a API ligar
 ENTRYPOINT ["dotnet", "LojaBackEnd.dll"]
