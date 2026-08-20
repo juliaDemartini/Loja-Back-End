@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ABhxzg+Dfek=",
+  "dgSpecHash": "Lmt+Ae7h7uQ=",
   "success": true,
-  "projectFilePath": "C:\\LojaBackEnd\\LojaBackEnd\\LojaBackEnd.csproj",
+  "projectFilePath": "C:\\Projetos\\LojaBackEnd\\LojaBackEnd.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\jujub\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.30\\microsoft.aspnetcore.openapi.8.0.30.nupkg.sha512",
     "C:\\Users\\jujub\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",

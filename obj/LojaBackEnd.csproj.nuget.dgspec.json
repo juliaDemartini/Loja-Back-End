@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\LojaBackEnd\\LojaBackEnd\\LojaBackEnd.csproj": {}
+    "C:\\Projetos\\LojaBackEnd\\LojaBackEnd.csproj": {}
   },
   "projects": {
-    "C:\\LojaBackEnd\\LojaBackEnd\\LojaBackEnd.csproj": {
+    "C:\\Projetos\\LojaBackEnd\\LojaBackEnd.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\LojaBackEnd\\LojaBackEnd\\LojaBackEnd.csproj",
+        "projectUniqueName": "C:\\Projetos\\LojaBackEnd\\LojaBackEnd.csproj",
         "projectName": "LojaBackEnd",
-        "projectPath": "C:\\LojaBackEnd\\LojaBackEnd\\LojaBackEnd.csproj",
+        "projectPath": "C:\\Projetos\\LojaBackEnd\\LojaBackEnd.csproj",
         "packagesPath": "C:\\Users\\jujub\\.nuget\\packages\\",
-        "outputPath": "C:\\LojaBackEnd\\LojaBackEnd\\obj\\",
+        "outputPath": "C:\\Projetos\\LojaBackEnd\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\jujub\\AppData\\Roaming\\NuGet\\NuGet.Config"
