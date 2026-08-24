@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using LojaBackEnd.Data;
+using LojaBackEnd.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,25 +24,28 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 
-var summaries = new[]
+// Rota para CADASTRAR um novo produto
+app.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    // 1. Adiciona a nova roupa na tabela do Entity Framework
+    banco.Produtos.Add(novoProduto);
+    
+    // 2. Salva a alteração de verdade no Supabase
+    await banco.SaveChangesAsync();
+    
+    // 3. Responde com sucesso (Código HTTP 201) e mostra o item salvo
+    return Results.Created($"/produtos/{novoProduto.Id}", novoProduto);
+});
 
-app.MapGet("/weatherforecast", () =>
+// Rota para LISTAR todos os produtos cadastrados
+app.MapGet("/produtos", async (AppDbContext banco) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    // Vai no banco, pega todos os produtos e transforma numa lista
+    var produtos = await banco.Produtos.ToListAsync();
+    
+    // Responde com sucesso (Código HTTP 200) entregando a lista
+    return Results.Ok(produtos);
+});
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 app.Run($"http://0.0.0.0:{port}");
