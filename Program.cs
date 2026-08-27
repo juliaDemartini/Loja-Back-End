@@ -4,7 +4,7 @@ using LojaBackEnd.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configuração do serviço de CORS
+// 1. Configuração de CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -15,7 +15,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Conexão com o PostgreSQL
+// 2. Conexão com o Banco de Dados
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -24,22 +24,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 2. Criação do banco protegida contra queda de inicialização
-try
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        db.Database.EnsureCreated();
-        Console.WriteLine("Banco de dados sincronizado com sucesso.");
-    }
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Aviso ao conectar no banco durante a inicializacao: {ex.Message}");
-}
-
-// 3. Middleware de CORS
 app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
@@ -48,8 +32,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Rota para CADASTRAR um novo produto
-// Rota para CADASTRAR um novo produto
+// Rota POST (Cadastrar)
 app.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
 {
     try
@@ -60,17 +43,26 @@ app.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
     }
     catch (Exception ex)
     {
-        var erroReal = ex.InnerException?.Message ?? ex.Message;
-        Console.WriteLine($"ERRO AO SALVAR NO BANCO: {erroReal}");
-        return Results.Problem(erroReal, statusCode: 500);
+        var detalhe = ex.InnerException?.Message ?? ex.Message;
+        Console.WriteLine($"ERRO DB POST: {detalhe}");
+        return Results.Problem(detail: detalhe, statusCode: 500);
     }
 }).RequireCors("AllowAll");
 
-// Rota para LISTAR todos os produtos cadastrados
+// Rota GET (Listar)
 app.MapGet("/produtos", async (AppDbContext banco) =>
 {
-    var produtos = await banco.Produtos.ToListAsync();
-    return Results.Ok(produtos);
+    try
+    {
+        var produtos = await banco.Produtos.ToListAsync();
+        return Results.Ok(produtos);
+    }
+    catch (Exception ex)
+    {
+        var detalhe = ex.InnerException?.Message ?? ex.Message;
+        Console.WriteLine($"ERRO DB GET: {detalhe}");
+        return Results.Problem(detail: detalhe, statusCode: 500);
+    }
 }).RequireCors("AllowAll");
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
