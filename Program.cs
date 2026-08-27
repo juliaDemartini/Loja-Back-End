@@ -49,11 +49,21 @@ if (app.Environment.IsDevelopment())
 }
 
 // Rota para CADASTRAR um novo produto
+// Rota para CADASTRAR um novo produto
 app.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
 {
-    banco.Produtos.Add(novoProduto);
-    await banco.SaveChangesAsync();
-    return Results.Created($"/produtos/{novoProduto.Id}", novoProduto);
+    try
+    {
+        banco.Produtos.Add(novoProduto);
+        await banco.SaveChangesAsync();
+        return Results.Created($"/produtos/{novoProduto.Id}", novoProduto);
+    }
+    catch (Exception ex)
+    {
+        var erroReal = ex.InnerException?.Message ?? ex.Message;
+        Console.WriteLine($"ERRO AO SALVAR NO BANCO: {erroReal}");
+        return Results.Problem(erroReal, statusCode: 500);
+    }
 }).RequireCors("AllowAll");
 
 // Rota para LISTAR todos os produtos cadastrados
