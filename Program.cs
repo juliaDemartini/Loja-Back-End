@@ -15,7 +15,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Conectando no PostgreSQL usando a URL do appsettings.json
+// Conexão com o PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -24,11 +24,19 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 2. Criação automática da tabela no Supabase caso ela ainda não exista
-using (var scope = app.Services.CreateScope())
+// 2. Criação do banco protegida contra queda de inicialização
+try
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated();
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        db.Database.EnsureCreated();
+        Console.WriteLine("Banco de dados sincronizado com sucesso.");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Aviso ao conectar no banco durante a inicializacao: {ex.Message}");
 }
 
 // 3. Middleware de CORS
