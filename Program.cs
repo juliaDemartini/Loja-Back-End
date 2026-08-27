@@ -4,7 +4,7 @@ using LojaBackEnd.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Criando a política com nome explícito
+// 1. Configuração do serviço de CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -15,6 +15,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Conectando no PostgreSQL usando a URL do appsettings.json
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -23,7 +24,14 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 2. Aplicando a política logo após o Build
+// 2. Criação automática da tabela no Supabase caso ela ainda não exista
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+}
+
+// 3. Middleware de CORS
 app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
@@ -32,6 +40,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Rota para CADASTRAR um novo produto
 app.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
 {
     banco.Produtos.Add(novoProduto);
@@ -39,6 +48,7 @@ app.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
     return Results.Created($"/produtos/{novoProduto.Id}", novoProduto);
 }).RequireCors("AllowAll");
 
+// Rota para LISTAR todos os produtos cadastrados
 app.MapGet("/produtos", async (AppDbContext banco) =>
 {
     var produtos = await banco.Produtos.ToListAsync();
