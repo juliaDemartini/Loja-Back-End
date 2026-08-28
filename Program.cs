@@ -65,5 +65,30 @@ app.MapGet("/produtos", async (AppDbContext banco) =>
     }
 }).RequireCors("AllowAll");
 
+// Rota DELETE (Remover por ID)
+app.MapDelete("/produtos/{id:int}", async (int id, AppDbContext banco) =>
+{
+    try
+    {
+        var produto = await banco.Produtos.FindAsync(id);
+        
+        if (produto is null)
+        {
+            return Results.NotFound(new { mensagem = $"Produto com ID {id} não encontrado." });
+        }
+
+        banco.Produtos.Remove(produto);
+        await banco.SaveChangesAsync();
+
+        return Results.NoContent();
+    }
+    catch (Exception ex)
+    {
+        var detalhe = ex.InnerException?.Message ?? ex.Message;
+        Console.WriteLine($"ERRO DB DELETE: {detalhe}");
+        return Results.Problem(detail: detalhe, statusCode: 500);
+    }
+}).RequireCors("AllowAll");
+
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 app.Run($"http://0.0.0.0:{port}");
