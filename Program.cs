@@ -65,6 +65,34 @@ app.MapGet("/produtos", async (AppDbContext banco) =>
     }
 }).RequireCors("AllowAll");
 
+// Rota PUT (Atualizar por ID)
+app.MapPut("/produtos/{id:int}", async (int id, Produto produtoAtualizado, AppDbContext banco) =>
+{
+    try
+    {
+        var produtoExistente = await banco.Produtos.FindAsync(id);
+
+        if (produtoExistente is null)
+        {
+            return Results.NotFound(new { mensagem = $"Produto com ID {id} não encontrado." });
+        }
+
+        // Atualiza as propriedades
+        produtoExistente.Nome = produtoAtualizado.Nome;
+        produtoExistente.Preco = produtoAtualizado.Preco;
+
+        await banco.SaveChangesAsync();
+
+        return Results.Ok(produtoExistente);
+    }
+    catch (Exception ex)
+    {
+        var detalhe = ex.InnerException?.Message ?? ex.Message;
+        Console.WriteLine($"ERRO DB PUT: {detalhe}");
+        return Results.Problem(detail: detalhe, statusCode: 500);
+    }
+}).RequireCors("AllowAll");
+
 // Rota DELETE (Remover por ID)
 app.MapDelete("/produtos/{id:int}", async (int id, AppDbContext banco) =>
 {
