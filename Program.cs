@@ -77,9 +77,10 @@ app.MapPut("/produtos/{id:int}", async (int id, Produto produtoAtualizado, AppDb
             return Results.NotFound(new { mensagem = $"Produto com ID {id} não encontrado." });
         }
 
-        // Atualiza as propriedades
+        // Atualiza todas as propriedades
         produtoExistente.Nome = produtoAtualizado.Nome;
         produtoExistente.Preco = produtoAtualizado.Preco;
+        produtoExistente.ImagemUrl = produtoAtualizado.ImagemUrl;
 
         await banco.SaveChangesAsync();
 
