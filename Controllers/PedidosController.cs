@@ -144,4 +144,41 @@ public class PedidosController : ControllerBase
             return StatusCode(500, new { mensagem = "Erro ao processar o checkout.", detalhe = ex.Message });
         }
     }
+    [HttpGet("usuario/{usuarioId}")]
+    public async Task<IActionResult> ObterPorUsuario(int usuarioId)
+    {
+        // 1. Busca os pedidos incluindo Itens e Produtos, ordenados pelos mais recentes
+        var pedidos = await _context.Pedidos
+            .AsNoTracking()
+            .Where(p => p.UsuarioId == usuarioId)
+            .Include(p => p.Itens)
+                .ThenInclude(i => i.Produto)
+            .OrderByDescending(p => p.DataCriacao)
+            .ToListAsync();
+
+        // 2. Mapeamento para o DTO de histórico com as fotos dos produtos
+        var resposta = pedidos.Select(p => new PedidoHistoricoDto
+        {
+            Id = p.Id,
+            DataCriacao = p.DataCriacao,
+            Status = p.Status,
+            Total = p.Total,
+            Subtotal = p.Subtotal,
+            Frete = p.Frete,
+            Desconto = p.Desconto,
+            FormaPagamento = p.FormaPagamento,
+            TipoFrete = p.TipoFrete,
+            Itens = p.Itens.Select(i => new ItemPedidoHistoricoDto
+            {
+                ProdutoId = i.ProdutoId,
+                Nome = i.Produto != null ? i.Produto.Nome : "Produto indisponível",
+                Quantidade = i.Quantidade,
+                PrecoUnitario = i.PrecoUnitario,
+                Tamanho = i.Tamanho,
+                ImagemUrl = i.Produto?.ImagemUrl
+            }).ToList()
+        }).ToList();
+
+        return Ok(resposta);
+    }
 }

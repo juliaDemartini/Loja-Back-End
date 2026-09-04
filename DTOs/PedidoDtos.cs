@@ -90,3 +90,26 @@ public class PedidoCriadoRespostaDto
     public EnderecoCheckoutDto Endereco { get; set; } = new();
     public List<ItemCheckoutDto> Itens { get; set; } = new();
 }
+public class ItemPedidoHistoricoDto
+{
+    public int ProdutoId { get; set; }
+    public string Nome { get; set; } = string.Empty;
+    public int Quantidade { get; set; }
+    public decimal PrecoUnitario { get; set; }
+    public string Tamanho { get; set; } = string.Empty;
+    public string? ImagemUrl { get; set; }
+}
+
+public class PedidoHistoricoDto
+{
+    public int Id { get; set; }
+    public DateTime DataCriacao { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public decimal Total { get; set; }
+    public decimal Subtotal { get; set; }
+    public decimal Frete { get; set; }
+    public decimal Desconto { get; set; }
+    public string FormaPagamento { get; set; } = string.Empty;
+    public string TipoFrete { get; set; } = string.Empty;
+    public List<ItemPedidoHistoricoDto> Itens { get; set; } = new();
+}
