@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "/axl2N5VqKc=",
+  "dgSpecHash": "I8EW56MGfuk=",
   "success": true,
   "projectFilePath": "C:\\Projetos\\LojaBackEnd\\LojaBackEnd.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\jujub\\.nuget\\packages\\bcrypt.net-next\\4.2.0\\bcrypt.net-next.4.2.0.nupkg.sha512",
     "C:\\Users\\jujub\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\jujub\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.30\\microsoft.aspnetcore.openapi.8.0.30.nupkg.sha512",
     "C:\\Users\\jujub\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",

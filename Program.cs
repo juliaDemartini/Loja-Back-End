@@ -21,6 +21,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -120,4 +121,5 @@ app.MapDelete("/produtos/{id:int}", async (int id, AppDbContext banco) =>
 }).RequireCors("AllowAll");
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+app.MapControllers();
 app.Run($"http://0.0.0.0:{port}");

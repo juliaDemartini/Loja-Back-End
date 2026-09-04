@@ -104,3 +104,4 @@ C:\Projetos\LojaBackEnd\obj\Debug\net8.0\refint\LojaBackEnd.dll
 C:\Projetos\LojaBackEnd\obj\Debug\net8.0\LojaBackEnd.pdb
 C:\Projetos\LojaBackEnd\obj\Debug\net8.0\LojaBackEnd.genruntimeconfig.cache
 C:\Projetos\LojaBackEnd\obj\Debug\net8.0\ref\LojaBackEnd.dll
+C:\Projetos\LojaBackEnd\bin\Debug\net8.0\BCrypt-Net-Next.dll
