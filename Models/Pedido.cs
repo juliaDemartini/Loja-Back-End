@@ -12,6 +12,7 @@ public class Pedido
     public Usuario? Usuario { get; set; }
 
     public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
+    public DateTime? DataAtualizacao { get; set; }
 
     // Valores Financeiros
     [Column(TypeName = "decimal(10,2)")]
@@ -66,6 +67,9 @@ public class Pedido
     [Required]
     [MaxLength(30)]
     public string Status { get; set; } = "Pendente";
+
+    [MaxLength(50)]
+    public string? CodigoRastreio { get; set; }
 
     // Relacionamento com os itens
     public List<ItemPedido> Itens { get; set; } = new();

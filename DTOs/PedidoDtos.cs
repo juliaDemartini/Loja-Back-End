@@ -90,6 +90,7 @@ public class PedidoCriadoRespostaDto
     public EnderecoCheckoutDto Endereco { get; set; } = new();
     public List<ItemCheckoutDto> Itens { get; set; } = new();
 }
+
 public class ItemPedidoHistoricoDto
 {
     public int ProdutoId { get; set; }
@@ -112,4 +113,13 @@ public class PedidoHistoricoDto
     public string FormaPagamento { get; set; } = string.Empty;
     public string TipoFrete { get; set; } = string.Empty;
     public List<ItemPedidoHistoricoDto> Itens { get; set; } = new();
+}
+
+public class AtualizarStatusPedidoDto
+{
+    [Required(ErrorMessage = "O status é obrigatório.")]
+    public string Status { get; set; } = string.Empty;
+
+    [MaxLength(50, ErrorMessage = "O código de rastreio deve ter no máximo 50 caracteres.")]
+    public string? CodigoRastreio { get; set; }
 }

@@ -180,5 +180,73 @@ public class PedidosController : ControllerBase
         }).ToList();
 
         return Ok(resposta);
+    
     }
+    [HttpPatch("{id}/status")]
+    public async Task<IActionResult> AtualizarStatus(int id, [FromBody] AtualizarStatusPedidoDto dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var pedido = await _context.Pedidos.FindAsync(id);
+        if (pedido == null)
+        {
+            return NotFound(new { mensagem = $"Pedido com ID {id} não foi encontrado." });
+        }
+
+        // Garante que ambos sejam tratados estritamente como string
+        string statusAtual = (pedido.Status ?? string.Empty).Trim().ToLower();
+        string novoStatus = (dto.Status ?? string.Empty).Trim().ToLower();
+
+        // Normalização de nomes equivalentes
+        if (statusAtual == "aguardando_pagamento") statusAtual = "pendente";
+        if (novoStatus == "aguardando_pagamento") novoStatus = "pendente";
+
+        // Tabela de transições válidas
+        var transicoesValidas = new Dictionary<string, List<string>>
+        {
+            { "pendente", new List<string> { "pago", "cancelado" } },
+            { "pago", new List<string> { "enviado", "cancelado" } },
+            { "enviado", new List<string> { "entregue" } },
+            { "entregue", new List<string>() },
+            { "cancelado", new List<string>() }
+        };
+
+        if (!transicoesValidas.ContainsKey(statusAtual))
+        {
+            return BadRequest(new { mensagem = $"Status atual '{pedido.Status}' é inválido." });
+        }
+
+        if (!transicoesValidas.ContainsKey(novoStatus))
+        {
+            return BadRequest(new { mensagem = $"O novo status '{dto.Status}' não é reconhecido pelo sistema." });
+        }
+
+        // Validação da transição
+        if (statusAtual != novoStatus && !transicoesValidas[statusAtual].Contains(novoStatus))
+        {
+            return BadRequest(new
+            {
+                mensagem = $"Transição inválida: não é permitido alterar o status de '{pedido.Status}' diretamente para '{dto.Status}'."
+            });
+        }
+// Atualização dos dados e timestamp com proteção contra nulos
+        pedido.Status = char.ToUpper(novoStatus[0]) + (novoStatus.Length > 1 ? novoStatus[1..] : "");
+        pedido.CodigoRastreio = dto.CodigoRastreio?.Trim().ToUpper();
+        pedido.DataAtualizacao = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            mensagem = "Status do pedido atualizado com sucesso.",
+            pedidoId = pedido.Id,
+            status = pedido.Status,
+            codigoRastreio = pedido.CodigoRastreio,
+            dataAtualizacao = pedido.DataAtualizacao
+        });
+    }
+    
 }
