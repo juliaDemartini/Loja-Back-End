@@ -56,6 +56,50 @@ namespace LojaBackEnd.Migrations
                     b.ToTable("ItensPedido");
                 });
 
+            modelBuilder.Entity("LojaBackEnd.Models.MedidaProduto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("BustoMax")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("BustoMin")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("CinturaMax")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("CinturaMin")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("Comprimento")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("QuadrilMax")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<decimal?>("QuadrilMin")
+                        .HasColumnType("decimal(6,2)");
+
+                    b.Property<string>("Tamanho")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProdutoId");
+
+                    b.ToTable("MedidasProdutos");
+                });
+
             modelBuilder.Entity("LojaBackEnd.Models.Pedido", b =>
                 {
                     b.Property<int>("Id")
@@ -225,6 +269,17 @@ namespace LojaBackEnd.Migrations
                     b.Navigation("Produto");
                 });
 
+            modelBuilder.Entity("LojaBackEnd.Models.MedidaProduto", b =>
+                {
+                    b.HasOne("LojaBackEnd.Models.Produto", "Produto")
+                        .WithMany("Medidas")
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Produto");
+                });
+
             modelBuilder.Entity("LojaBackEnd.Models.Pedido", b =>
                 {
                     b.HasOne("LojaBackEnd.Models.Usuario", "Usuario")
@@ -239,6 +294,11 @@ namespace LojaBackEnd.Migrations
             modelBuilder.Entity("LojaBackEnd.Models.Pedido", b =>
                 {
                     b.Navigation("Itens");
+                });
+
+            modelBuilder.Entity("LojaBackEnd.Models.Produto", b =>
+                {
+                    b.Navigation("Medidas");
                 });
 #pragma warning restore 612, 618
         }
