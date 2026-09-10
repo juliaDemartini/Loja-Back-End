@@ -33,4 +33,7 @@ public class MedidaProduto
 
     [Column(TypeName = "decimal(6,2)")]
     public decimal? Comprimento { get; set; }
+
+     [JsonIgnore]
+        public Produto? Produto { get; set; }
 }

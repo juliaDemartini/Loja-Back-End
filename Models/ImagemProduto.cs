@@ -8,7 +8,7 @@ public class ImagemProduto
     public bool Principal { get; set; }
     public string? CorHexVinculada { get; set; }
 
-    // ADICIONE ESTE ATRIBUTO se houver a propriedade Produto aqui dentro:
-    // [JsonIgnore]
-    // public Produto? Produto { get; set; }
+    
+    [JsonIgnore]
+    public Produto? Produto { get; set; }
 }

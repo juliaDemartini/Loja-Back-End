@@ -1,12 +1,15 @@
 using System.Text.Json.Serialization;
-namespace LojaBackEnd.Models;
 
-public class CorProduto
+namespace LojaBackEnd.Models
 {
-    public int Id { get; set; }
-    public string Nome { get; set; } = string.Empty;
-    public string CodigoHex { get; set; } = string.Empty;
+    public class CorProduto
+    {
+        public int Id { get; set; }
+        public int ProdutoId { get; set; }
+        public string Nome { get; set; } = string.Empty;
+        public string CodigoHex { get; set; } = string.Empty;
 
-    public int ProdutoId { get; set; }
-   
+        [JsonIgnore]
+        public Produto? Produto { get; set; }
+    }
 }
