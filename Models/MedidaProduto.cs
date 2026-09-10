@@ -11,12 +11,7 @@ public class MedidaProduto
     [Required]
     public int ProdutoId { get; set; }
 
-    [JsonIgnore]
-    public Produto? Produto { get; set; }
-
-    [Required]
-    [MaxLength(10)]
-    public string Tamanho { get; set; } = string.Empty; // PP, P, M, G, GG
+   public string Tamanho { get; set; } = string.Empty; // PP, P, M, G, GG
 
     [Column(TypeName = "decimal(6,2)")]
     public decimal? BustoMin { get; set; }
