@@ -17,6 +17,9 @@ public class Produto
     public string? Elasticidade { get; set; }
     public string? Cuidados { get; set; }
 
+    public string? Provador3dGenero { get; set; }
+    public string? Modelo3dUrl { get; set; }
+
     // Alinhe com o nome das classes que estão na sua pasta Models
     public List<ImagemProduto> Imagens { get; set; } = new();
     public List<CorProduto> Cores { get; set; } = new();
