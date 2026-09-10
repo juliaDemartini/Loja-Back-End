@@ -197,7 +197,16 @@ namespace LojaBackEnd.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Categoria")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Estilo")
+                        .HasColumnType("text");
+
                     b.Property<string>("ImagemUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Lavagem")
                         .HasColumnType("text");
 
                     b.Property<string>("Nome")
@@ -206,6 +215,12 @@ namespace LojaBackEnd.Migrations
 
                     b.Property<decimal>("Preco")
                         .HasColumnType("numeric");
+
+                    b.Property<bool>("Provador3dDisponivel")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Tipo")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
