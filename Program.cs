@@ -46,10 +46,20 @@ var api = app.MapGroup("/api");
 // ==========================================
 
 // Rota POST (Cadastrar Produto)
-api.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
+api.MapPost("/produtos", async (System.Text.Json.JsonElement payload, AppDbContext banco) =>
 {
     try
     {
+        Console.WriteLine($"JSON RECEBIDO DO FRONT: {payload.GetRawText()}");
+        
+        // Converte manualmente para a classe Produto
+        var novoProduto = System.Text.Json.JsonSerializer.Deserialize<Produto>(payload.GetRawText(), new System.Text.Json.JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        if (novoProduto == null) return Results.BadRequest("Payload inválido.");
+
         var capa = novoProduto.Imagens?.FirstOrDefault(i => i.Principal) ?? novoProduto.Imagens?.FirstOrDefault();
         if (capa != null)
         {
@@ -62,12 +72,12 @@ api.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
     }
     catch (Exception ex)
     {
-        // Isso vai imprimir o erro exato no log do Render
-        var erroCompleto = ex.InnerException?.Message ?? ex.Message;
-        Console.WriteLine($"ERRO CRITICO NO POST: {erroCompleto} | STACK: {ex.StackTrace}");
-        return Results.Problem(detail: erroCompleto, statusCode: 500);
+        var detalhe = ex.InnerException?.Message ?? ex.Message;
+        Console.WriteLine($"ERRO NO DESERIALIZE/POST: {detalhe}");
+        return Results.Problem(detail: detalhe, statusCode: 500);
     }
 }).RequireCors("AllowAll");
+
 // Rota GET (Listar Produtos)
 api.MapGet("/produtos", async (AppDbContext banco) =>
 {
