@@ -37,8 +37,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Crie um grupo para todas as rotas começarem com /api
+// Grupo centralizado para todas as rotas começarem com /api
 var api = app.MapGroup("/api");
+
+// ==========================================
+// ROTAS DE PRODUTOS
+// ==========================================
 
 // Rota POST (Cadastrar Produto)
 api.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
@@ -154,6 +158,25 @@ api.MapDelete("/produtos/{id:int}", async (int id, AppDbContext banco) =>
     {
         var detalhe = ex.InnerException?.Message ?? ex.Message;
         Console.WriteLine($"ERRO DB DELETE: {detalhe}");
+        return Results.Problem(detail: detalhe, statusCode: 500);
+    }
+}).RequireCors("AllowAll");
+
+// ==========================================
+// ROTAS DE PEDIDOS 
+// ==========================================
+
+api.MapGet("/pedidos", async (AppDbContext banco) =>
+{
+    try
+    {
+        // Retorna lista vazia caso a tabela de pedidos ainda não esteja criada no banco
+        return Results.Ok(new List<object>());
+    }
+    catch (Exception ex)
+    {
+        var detalhe = ex.InnerException?.Message ?? ex.Message;
+        Console.WriteLine($"ERRO DB GET PEDIDOS: {detalhe}");
         return Results.Problem(detail: detalhe, statusCode: 500);
     }
 }).RequireCors("AllowAll");
