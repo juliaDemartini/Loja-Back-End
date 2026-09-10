@@ -37,8 +37,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Rota POST (Cadastrar Produto com Galeria, Cores e Ficha Técnica)
-app.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
+// Crie um grupo para todas as rotas começarem com /api
+var api = app.MapGroup("/api");
+
+// Rota POST (Cadastrar Produto)
+api.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
 {
     try
     {
@@ -50,7 +53,7 @@ app.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
 
         banco.Produtos.Add(novoProduto);
         await banco.SaveChangesAsync();
-        return Results.Created($"/produtos/{novoProduto.Id}", novoProduto);
+        return Results.Created($"/api/produtos/{novoProduto.Id}", novoProduto);
     }
     catch (Exception ex)
     {
@@ -60,8 +63,8 @@ app.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
     }
 }).RequireCors("AllowAll");
 
-// Rota GET (Listar Produtos com Relacionamentos)
-app.MapGet("/produtos", async (AppDbContext banco) =>
+// Rota GET (Listar Produtos)
+api.MapGet("/produtos", async (AppDbContext banco) =>
 {
     try
     {
@@ -80,8 +83,8 @@ app.MapGet("/produtos", async (AppDbContext banco) =>
     }
 }).RequireCors("AllowAll");
 
-// Rota PUT (Atualizar Produto por ID)
-app.MapPut("/produtos/{id:int}", async (int id, Produto produtoAtualizado, AppDbContext banco) =>
+// Rota PUT (Atualizar Produto)
+api.MapPut("/produtos/{id:int}", async (int id, Produto produtoAtualizado, AppDbContext banco) =>
 {
     try
     {
@@ -130,8 +133,8 @@ app.MapPut("/produtos/{id:int}", async (int id, Produto produtoAtualizado, AppDb
     }
 }).RequireCors("AllowAll");
 
-// Rota DELETE (Remover por ID)
-app.MapDelete("/produtos/{id:int}", async (int id, AppDbContext banco) =>
+// Rota DELETE (Remover Produto)
+api.MapDelete("/produtos/{id:int}", async (int id, AppDbContext banco) =>
 {
     try
     {
