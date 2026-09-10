@@ -25,6 +25,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
     });
 
 var app = builder.Build();
@@ -61,12 +62,12 @@ api.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
     }
     catch (Exception ex)
     {
-        var detalhe = ex.InnerException?.Message ?? ex.Message;
-        Console.WriteLine($"ERRO DB POST: {detalhe}");
-        return Results.Problem(detail: detalhe, statusCode: 500);
+        // Isso vai imprimir o erro exato no log do Render
+        var erroCompleto = ex.InnerException?.Message ?? ex.Message;
+        Console.WriteLine($"ERRO CRITICO NO POST: {erroCompleto} | STACK: {ex.StackTrace}");
+        return Results.Problem(detail: erroCompleto, statusCode: 500);
     }
 }).RequireCors("AllowAll");
-
 // Rota GET (Listar Produtos)
 api.MapGet("/produtos", async (AppDbContext banco) =>
 {
