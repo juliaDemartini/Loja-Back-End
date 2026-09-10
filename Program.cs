@@ -21,7 +21,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 
 var app = builder.Build();
 
@@ -33,11 +37,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Rota POST (Cadastrar)
+// Rota POST (Cadastrar Produto com Galeria, Cores e Ficha Técnica)
 app.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
 {
     try
     {
+        var capa = novoProduto.Imagens?.FirstOrDefault(i => i.Principal) ?? novoProduto.Imagens?.FirstOrDefault();
+        if (capa != null)
+        {
+            novoProduto.ImagemUrl = capa.Url;
+        }
+
         banco.Produtos.Add(novoProduto);
         await banco.SaveChangesAsync();
         return Results.Created($"/produtos/{novoProduto.Id}", novoProduto);
@@ -50,12 +60,16 @@ app.MapPost("/produtos", async (Produto novoProduto, AppDbContext banco) =>
     }
 }).RequireCors("AllowAll");
 
-// Rota GET (Listar)
+// Rota GET (Listar Produtos com Relacionamentos)
 app.MapGet("/produtos", async (AppDbContext banco) =>
 {
     try
     {
-        var produtos = await banco.Produtos.ToListAsync();
+        var produtos = await banco.Produtos
+            .Include(p => p.Imagens)
+            .Include(p => p.Cores)
+            .Include(p => p.Medidas)
+            .ToListAsync();
         return Results.Ok(produtos);
     }
     catch (Exception ex)
@@ -66,22 +80,43 @@ app.MapGet("/produtos", async (AppDbContext banco) =>
     }
 }).RequireCors("AllowAll");
 
-// Rota PUT (Atualizar por ID)
+// Rota PUT (Atualizar Produto por ID)
 app.MapPut("/produtos/{id:int}", async (int id, Produto produtoAtualizado, AppDbContext banco) =>
 {
     try
     {
-        var produtoExistente = await banco.Produtos.FindAsync(id);
+        var produtoExistente = await banco.Produtos
+            .Include(p => p.Imagens)
+            .Include(p => p.Cores)
+            .FirstOrDefaultAsync(p => p.Id == id);
 
         if (produtoExistente is null)
         {
             return Results.NotFound(new { mensagem = $"Produto com ID {id} não encontrado." });
         }
 
-        // Atualiza todas as propriedades
         produtoExistente.Nome = produtoAtualizado.Nome;
         produtoExistente.Preco = produtoAtualizado.Preco;
-        produtoExistente.ImagemUrl = produtoAtualizado.ImagemUrl;
+        produtoExistente.Descricao = produtoAtualizado.Descricao;
+        produtoExistente.Composicao = produtoAtualizado.Composicao;
+        produtoExistente.Modelagem = produtoAtualizado.Modelagem;
+        produtoExistente.Elasticidade = produtoAtualizado.Elasticidade;
+        produtoExistente.Cuidados = produtoAtualizado.Cuidados;
+
+        produtoExistente.Categoria = produtoAtualizado.Categoria;
+        produtoExistente.Tipo = produtoAtualizado.Tipo;
+        produtoExistente.Estilo = produtoAtualizado.Estilo;
+        produtoExistente.Lavagem = produtoAtualizado.Lavagem;
+        produtoExistente.Provador3dDisponivel = produtoAtualizado.Provador3dDisponivel;
+
+        banco.ImagensProdutos.RemoveRange(produtoExistente.Imagens);
+        produtoExistente.Imagens = produtoAtualizado.Imagens ?? new();
+
+        banco.CoresProdutos.RemoveRange(produtoExistente.Cores);
+        produtoExistente.Cores = produtoAtualizado.Cores ?? new();
+
+        var capa = produtoExistente.Imagens.FirstOrDefault(i => i.Principal) ?? produtoExistente.Imagens.FirstOrDefault();
+        produtoExistente.ImagemUrl = capa?.Url ?? produtoAtualizado.ImagemUrl;
 
         await banco.SaveChangesAsync();
 

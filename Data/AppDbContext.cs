@@ -12,6 +12,10 @@ public class AppDbContext : DbContext
     public DbSet<Pedido> Pedidos => Set<Pedido>();
     public DbSet<ItemPedido> ItensPedido => Set<ItemPedido>();
     public DbSet<MedidaProduto> MedidasProdutos => Set<MedidaProduto>();
+    
+    // --- Novos DbSets para Galeria e Cores ---
+    public DbSet<ImagemProduto> ImagensProdutos => Set<ImagemProduto>();
+    public DbSet<CorProduto> CoresProdutos => Set<CorProduto>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,6 +47,20 @@ public class AppDbContext : DbContext
             .HasOne(m => m.Produto)
             .WithMany(p => p.Medidas)
             .HasForeignKey(m => m.ProdutoId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // --- Novos Relacionamentos: Produto -> ImagemProduto (1:N) ---
+        modelBuilder.Entity<ImagemProduto>()
+            .HasOne(img => img.Produto)
+            .WithMany(p => p.Imagens)
+            .HasForeignKey(img => img.ProdutoId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // --- Novos Relacionamentos: Produto -> CorProduto (1:N) ---
+        modelBuilder.Entity<CorProduto>()
+            .HasOne(c => c.Produto)
+            .WithMany(p => p.Cores)
+            .HasForeignKey(c => c.ProdutoId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

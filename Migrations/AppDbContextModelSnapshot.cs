@@ -22,6 +22,60 @@ namespace LojaBackEnd.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("LojaBackEnd.Models.CorProduto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CodigoHex")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProdutoId");
+
+                    b.ToTable("CoresProdutos");
+                });
+
+            modelBuilder.Entity("LojaBackEnd.Models.ImagemProduto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CorHexVinculada")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Principal")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProdutoId");
+
+                    b.ToTable("ImagensProdutos");
+                });
+
             modelBuilder.Entity("LojaBackEnd.Models.ItemPedido", b =>
                 {
                     b.Property<int>("Id")
@@ -200,6 +254,18 @@ namespace LojaBackEnd.Migrations
                     b.Property<string>("Categoria")
                         .HasColumnType("text");
 
+                    b.Property<string>("Composicao")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Cuidados")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Descricao")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Elasticidade")
+                        .HasColumnType("text");
+
                     b.Property<string>("Estilo")
                         .HasColumnType("text");
 
@@ -207,6 +273,9 @@ namespace LojaBackEnd.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Lavagem")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Modelagem")
                         .HasColumnType("text");
 
                     b.Property<string>("Nome")
@@ -265,6 +334,28 @@ namespace LojaBackEnd.Migrations
                     b.ToTable("Usuarios");
                 });
 
+            modelBuilder.Entity("LojaBackEnd.Models.CorProduto", b =>
+                {
+                    b.HasOne("LojaBackEnd.Models.Produto", "Produto")
+                        .WithMany("Cores")
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Produto");
+                });
+
+            modelBuilder.Entity("LojaBackEnd.Models.ImagemProduto", b =>
+                {
+                    b.HasOne("LojaBackEnd.Models.Produto", "Produto")
+                        .WithMany("Imagens")
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Produto");
+                });
+
             modelBuilder.Entity("LojaBackEnd.Models.ItemPedido", b =>
                 {
                     b.HasOne("LojaBackEnd.Models.Pedido", "Pedido")
@@ -313,6 +404,10 @@ namespace LojaBackEnd.Migrations
 
             modelBuilder.Entity("LojaBackEnd.Models.Produto", b =>
                 {
+                    b.Navigation("Cores");
+
+                    b.Navigation("Imagens");
+
                     b.Navigation("Medidas");
                 });
 #pragma warning restore 612, 618
