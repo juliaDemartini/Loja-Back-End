@@ -1,0 +1,21 @@
+
+# Arquivos gerados pelo .NET
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Arquivos temporários
+*.log
+*.tmp
+
+# Configurações locais e segredos
+appsettings.Development.json
+secrets.json
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
