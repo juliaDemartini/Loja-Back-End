@@ -1,0 +1,61 @@
+
+name: CI/CD - Loja DNA
+
+on:
+  pull_request:
+    branches:
+      - main
+
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: Build e Testes
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+
+      - name: Configurar .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restaurar dependências da API
+        run: dotnet restore LojaBackEnd.csproj
+
+      - name: Compilar API
+        run: dotnet build LojaBackEnd.csproj --configuration Release --no-restore
+
+      - name: Restaurar dependências dos testes
+        run: dotnet restore LojaBackEnd.Tests/LojaBackEnd.Tests.csproj
+
+      - name: Executar testes automatizados
+        run: dotnet test LojaBackEnd.Tests/LojaBackEnd.Tests.csproj --configuration Release --no-restore --logger "console;verbosity=normal"
+
+  deploy:
+    name: Deploy no Render
+    runs-on: ubuntu-latest
+    needs: build-test
+
+    # Só executa após merge na main e quando o deploy estiver habilitado
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.ENABLE_RENDER_DEPLOY == 'true'
+
+    steps:
+      - name: Acionar deploy no Render
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "Erro: configure o secret RENDER_DEPLOY_HOOK_URL."
+            exit 1
+          fi
+
+          curl --fail --silent --show-error \
+            --request POST "$RENDER_DEPLOY_HOOK_URL"
