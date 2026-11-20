@@ -12,14 +12,4 @@ namespace LojaBackEnd.Models
         [JsonIgnore]
         public Produto? Produto { get; set; }
     }
-    
-    //Teste de validação de status - Cindy //
-    [Fact]
-    public void Teste4_StatusPedidoValido_DeveSerAceito()
-    {
-        var statusPermitidos = new[] { "Pendente", "Pago", "Enviado", "Entregue" };
-        var novoStatus = "Pago";
-
-        Assert.Contains(novoStatus, statusPermitidos);
-    }
 }
