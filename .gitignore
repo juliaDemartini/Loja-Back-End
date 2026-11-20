@@ -14,6 +14,7 @@ obj/
 
 # Configurações locais e segredos
 appsettings.Development.json
+appsettings.json
 secrets.json
 
 # Sistema operacional
