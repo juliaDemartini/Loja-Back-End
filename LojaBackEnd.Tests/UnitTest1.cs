@@ -5,13 +5,8 @@ namespace LojaBackEnd.Tests;
 
 public class UnitTest1
 {
-    [Fact]
-    public void Test1()
-    {
-
-    }
        //Teste de validação de status - Cindy //
-    [Fact]
+   [Fact]
     public void Teste4_StatusPedidoValido_DeveSerAceito()
     {
         var statusPermitidos = new[] { "Pendente", "Pago", "Enviado", "Entregue" };
@@ -20,22 +15,25 @@ public class UnitTest1
         Assert.Contains(novoStatus, statusPermitidos);
     }
 
-// Teste de limite do Nome no modelo Usuario - Cindy
+    // Teste de falha proposital para demonstração do pipeline
     [Fact]
-    public void Usuario_NomeDentroDoLimite100_DeveSerValido()
+    public void Usuario_NomeMuitoLongo_DeveFalharNaValidacao()
     {
-        var usuario = new Usuario
+        // Instanciando o objeto diretamente no teste com um nome inválido
+        var usuarioInvalido = new Usuario
         {
-            Nome = new string('A', 100),
-            Email = "cindyane@exemplo.com",
+            Nome = new string('A', 105), // Nome com 105 caracteres (ultrapassa o limite de 100)
+            Email = "teste@exemplo.com",
             SenhaHash = "hash_seguro_123"
         };
 
-        var contexto = new ValidationContext(usuario);
+        var contexto = new ValidationContext(usuarioInvalido);
         var resultados = new List<ValidationResult>();
-        var valido = Validator.TryValidateObject(usuario, contexto, resultados, validateAllProperties: true);
+        
+        // Executando a validação
+        var ehValido = Validator.TryValidateObject(usuarioInvalido, contexto, resultados, validateAllProperties: true);
 
-        Assert.True(valido);
-        Assert.Empty(resultados);
+        // A asserção espera que seja falso, forçando a falha para a demonstração
+        Assert.True(ehValido);
     }
 }
