@@ -34,6 +34,6 @@ public class UnitTest1
         var ehValido = Validator.TryValidateObject(usuarioInvalido, contexto, resultados, validateAllProperties: true);
 
         // A asserção espera que seja falso, forçando a falha para a demonstração
-        Assert.True(ehValido);
+        Assert.false(ehValido);
     }
 }
