@@ -176,6 +176,7 @@ api.MapDelete("/produtos/{id:int}", async (int id, AppDbContext banco) =>
 // ==========================================
 // ROTAS DE PEDIDOS 
 // ==========================================
+//comentário de teste//
 
 api.MapGet("/pedidos", async (AppDbContext banco) =>
 {
