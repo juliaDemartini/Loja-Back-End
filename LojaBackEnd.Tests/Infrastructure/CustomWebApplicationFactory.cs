@@ -28,5 +28,4 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
             banco.Database.EnsureCreated();
         });
-    }
-}
+    }}
