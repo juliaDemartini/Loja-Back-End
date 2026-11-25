@@ -1,101 +1,237 @@
-# 🛍️ Loja Roupas API - Backend
 
-API RESTful desenvolvida em **.NET (C#)** para gerenciamento e catálogo de peças de vestuário, integrada ao banco de dados relacional **PostgreSQL (Supabase)** e hospedada no **Render**.
+# 🛍️ Loja DNA — Backend API
 
----
+API RESTful desenvolvida em **C# com .NET 8** para gerenciamento de produtos de uma loja de roupas. A aplicação utiliza PostgreSQL por meio do Supabase e está hospedada no Render.
 
-## 🛠️ Tecnologias Utilizadas
-
-* **[.NET](https://dotnet.microsoft.com/)** - Framework principal para construção de APIs Minimal APIs de alta performance.
-* **[Entity Framework Core](https://learn.microsoft.com/ef/core/)** - ORM para modelagem, mapeamento e manipulação de entidades no banco de dados.
-* **[PostgreSQL (Supabase)](https://supabase.com/)** - Banco de dados relacional em nuvem.
-* **[Swagger / OpenAPI](https://swagger.io/)** - Documentação e interface interativa para testes de endpoints.
-* **[Render](https://render.com/)** - Plataforma de hospedagem e deploy contínuo (CI/CD).
+O projeto também implementa um fluxo de **CI/CD com GitHub Actions**, incluindo build, testes automatizados e deploy da aplicação.
 
 ---
 
-## ⚙️ Configuração e Variáveis de Ambiente
+## 🛠️ Tecnologias utilizadas
 
-Para rodar a API localmente, certifique-se de configurar a Connection String com o PostgreSQL do Supabase no arquivo `appsettings.json` (ou `appsettings.Development.json`):
+- **C# / .NET 8:** desenvolvimento da API utilizando Minimal APIs.
+- **ASP.NET Core:** estrutura para construção dos endpoints REST.
+- **Entity Framework Core:** ORM para acesso e manipulação dos dados.
+- **PostgreSQL / Supabase:** banco de dados relacional em nuvem.
+- **xUnit:** framework para testes automatizados.
+- **EF Core InMemory:** banco em memória utilizado nos testes.
+- **Git e GitHub:** versionamento e colaboração.
+- **GitHub Actions:** automação do pipeline CI/CD.
+- **Render:** hospedagem e deploy da API.
+- **Swagger / OpenAPI:** documentação e teste dos endpoints.
 
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=SEU_HOST_SUPABASE;Port=5432;Database=postgres;Username=postgres;Password=SUA_SENHA;"
-  }
-}
+---
 
+## 📁 Estrutura do projeto
+
+```text
+Loja-Back-End/
+├── .github/
+│   └── workflows/
+│       └── cicd.yml
+├── LojaBackEnd/
+├── LojaBackEnd.Tests/
+│   ├── Infrastructure/
+│   │   └── CustomWebApplication.cs
+│   ├── UnitTest1.cs
+│   └── LojaBackEnd.Tests.csproj
+├── Data/
+├── Models/
+├── Program.cs
+└── LojaBackEnd.csproj
 ```
 
 ---
 
-## 🚀 Como Executar Localmente
+## ⚙️ Configuração do ambiente
 
 ### Pré-requisitos
 
-* [.NET SDK 8.0+](https://dotnet.microsoft.com/download) instalado.
-* Instância do PostgreSQL configurada no Supabase.
+- .NET SDK 8.0 ou superior.
+- Git instalado.
+- Conta e banco PostgreSQL configurados no Supabase.
 
-### Passo a Passo
+### Configuração da conexão com o banco
+
+A aplicação utiliza a variável de configuração:
+
+`ConnectionStrings:DefaultConnection`
+
+Para configurar a conexão localmente sem armazenar credenciais no repositório, utilize User Secrets:
+
+```bash
+dotnet user-secrets init
+```
+
+Em seguida:
+
+```bash
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "SUA_CONNECTION_STRING"
+```
+
+Também é possível configurar a variável de ambiente:
+
+```text
+ConnectionStrings__DefaultConnection
+```
+
+**Importante:** nunca publique senhas, tokens ou connection strings reais no GitHub.
+
+---
+
+## 🚀 Executando a aplicação localmente
 
 1. Clone o repositório:
 
 ```bash
-git clone [https://github.com/juliaDemartini/Loja-Back-End.git](https://github.com/juliaDemartini/Loja-Back-End.git)
-cd Loja-Back-End
-
+git clone https://github.com/juliaDemartini/Loja-Back-End.git
 ```
 
-2. Restaure as dependências do projeto:
+2. Acesse a pasta:
+
+```bash
+cd Loja-Back-End
+```
+
+3. Restaure as dependências:
 
 ```bash
 dotnet restore
-
 ```
 
-3. Execute a aplicação:
+4. Execute a aplicação:
 
 ```bash
 dotnet run
-
 ```
 
-4. Acesse a documentação Swagger interativa no navegador:
+5. Acesse a documentação Swagger pelo endereço informado no terminal, quando disponível.
 
+---
+
+## 🧪 Testes automatizados
+
+O projeto utiliza **xUnit** para executar testes automatizados.
+
+Foram implementados quatro testes, divididos entre as integrantes da equipe:
+
+| Integrante | Teste | Objetivo |
+|---|---|---|
+| Cindyane | Validação de status do pedido | Verificar a aceitação de um status permitido. |
+| Cindyane | Validação do nome do usuário | Verificar a rejeição de um nome acima do limite definido. |
+| Julia | Listagem de produtos | Verificar se a API retorna uma lista de produtos. |
+| Julia | Cadastro de produtos | Verificar se um produto pode ser cadastrado com sucesso. |
+
+Os testes de integração utilizam `WebApplicationFactory` e banco de dados em memória, evitando a necessidade de utilizar o banco de produção durante sua execução.
+
+### Como executar os testes
+
+Na raiz do repositório, execute:
+
+```bash
+dotnet test LojaBackEnd.Tests/LojaBackEnd.Tests.csproj
 ```
-http://localhost:8080/swagger
 
+Para visualizar os detalhes da execução:
+
+```bash
+dotnet test LojaBackEnd.Tests/LojaBackEnd.Tests.csproj --logger "console;verbosity=normal"
 ```
 
 ---
 
-## 📍 Endpoints da API
+## 🔄 Pipeline CI/CD — GitHub Actions
 
-| Método | Rota | Descrição | Corpo da Requisição (Payload) | Respostas HTTP |
-| --- | --- | --- | --- | --- |
-| **`GET`** | `/produtos` | Retorna a lista de todas as peças cadastradas | *Nenhum* | `200 OK` |
-| **`POST`** | `/produtos` | Cadastra uma nova peça no catálogo | `{"nome": "Vestido", "preco": 129.90, "imagemUrl": "https://..."}` | `201 Created` / `500 Error` |
-| **`PUT`** | `/produtos/{id}` | Atualiza nome, preço ou foto de uma peça existente | `{"id": 1, "nome": "Novo Nome", "preco": 149.90, "imagemUrl": "https://..."}` | `200 OK` / `404 Not Found` |
-| **`DELETE`** | `/produtos/{id}` | Remove uma peça do catálogo pelo seu ID | *Nenhum* | `204 NoContent` / `404 Not Found` |
+O projeto possui um pipeline automatizado configurado em:
+
+`.github/workflows/cicd.yml`
+
+O fluxo utiliza dois eventos principais:
+
+### 1. Pull Request para a branch main
+
+Quando um Pull Request é aberto ou atualizado direcionado à branch `main`, o GitHub Actions executa:
+
+- Restauração das dependências.
+- Build da aplicação.
+- Execução dos testes automatizados.
+
+O merge só pode acontecer quando as verificações obrigatórias forem aprovadas.
+
+### 2. Push na branch main
+
+Após a integração das alterações na branch `main`, o pipeline executa:
+
+- Build da aplicação.
+- Execução dos testes automatizados.
+- Deploy da API no Render, quando habilitado na configuração do workflow.
+
+### Fluxo de integração
+
+```text
+Desenvolvimento em branch
+          |
+          v
+     Pull Request
+          |
+          v
+   GitHub Actions
+          |
+          v
+    Build e Testes
+          |
+     +----+----+
+     |         |
+   Falha     Sucesso
+     |         |
+     v         v
+ Corrigir   Aprovação
+               |
+               v
+           Merge main
+               |
+               v
+        GitHub Actions
+               |
+               v
+          Build e Testes
+               |
+               v
+          Deploy Render
+```
+
+### Proteção da branch main
+
+A branch principal possui regras de proteção para garantir a qualidade das alterações:
+
+- Integração somente por Pull Request.
+- Aprovação de outro integrante.
+- Verificações obrigatórias do GitHub Actions.
+- Bloqueio do merge quando o pipeline falha.
 
 ---
 
-## 🌐 Deploy em Produção
+## 🌐 Deploy em produção
 
-A API está publicada e operando em ambiente de produção no Render através do link base:
+A API está hospedada na plataforma Render:
 
-```
-[https://api-loja-roupas-1ugj.onrender.com](https://api-loja-roupas-1ugj.onrender.com)
+https://api-loja-roupas-1ugj.onrender.com
 
-```
-
-```
+O deploy é integrado ao GitHub Actions, permitindo automatizar a publicação após alterações aprovadas e integradas à branch principal.
 
 ---
+
+## 👩‍💻 Equipe
+
+Projeto desenvolvido em colaboração por:
+
+- **Julia Demartini**
+- **Cindyane Batista**
+
+Repositório: https://github.com/juliaDemartini/Loja-Back-End
+
+---
+
+## 📄 Licença
+
+Projeto desenvolvido para fins acadêmicos.
