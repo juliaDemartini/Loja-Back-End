@@ -113,4 +113,14 @@ public class UnitTest1 : IClassFixture<CustomWebApplicationFactory>
 
         Assert.Contains("Calça Jeans Cadastro Teste", respostaJson);
     }
+
+    // TESTE 5 - JULIA (DEMONSTRAÇÃO CI/CD)
+[Fact]
+public async Task DeleteProduto_Inexistente_DeveRetornarNotFound()
+{
+    var resposta = await _client.DeleteAsync("/api/produtos/999999");
+
+    // Expectativa incorreta propositalmente para demonstrar a falha
+    Assert.Equal(HttpStatusCode.OK, resposta.StatusCode);
+}
 }
